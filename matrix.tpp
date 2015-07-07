@@ -283,4 +283,10 @@ bool inRange(int x, int y, const Matrix<T>& m)
     return (inRange(x, 0, m.cols() - 1) && inRange(y, 0, m.rows() - 1));
 }
 
+template<class T>
+bool inRange(double x, double y, const Matrix<T>& m)
+{
+    return (inRange(x, 0., double(m.cols() - 1 )) && inRange(y, 0., double(m.rows() - 1)));
+}
+
 }

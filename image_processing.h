@@ -24,7 +24,7 @@ const QImage getQImage(Matrix<double>& m);
 
 const QRgb getqRgbFromFlow(const Matrix<double>& flow, double max_flow_norm);
 
-const QImage getQImageFromFlow(Matrix<Matrix<double> > flow);
+const QImage getQImageFlows(const Matrix<Matrix<double> >& flows);
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Unkown flow
