@@ -22,9 +22,9 @@ const Matrix<double> IntensityMatrix(const char* file_name);
 
 const QImage getQImage(Matrix<double>& m);
 
-const QRgb getqRgbFromFlow(const Matrix<double>& flow, double max_flow_norm);
+const QRgb getQRgbFromFlow(const Matrix<double>& flow, double max_flow_norm);
 
-const QImage getQImageFlows(const Matrix<Matrix<double> >& flows);
+const QImage getQImageFromFlows(const Matrix<Matrix<double> >& flows);
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Unkown flow
@@ -59,6 +59,9 @@ const Matrix<Matrix<double> > PyramidalLucasKanadeRefined(int window_size,  doub
                                                           int max_scaling_level,
                                                           const Matrix<double>& img_prev,
                                                           const Matrix<double>& img_curr);
+
+void handleFlowError(Matrix<Matrix<double> >& flows, double max_error,
+                     const Matrix<double>& img_prev, const Matrix<double>& img_curr);
 
 }
 

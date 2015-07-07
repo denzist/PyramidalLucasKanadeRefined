@@ -56,7 +56,7 @@ const QImage getQImage(Matrix<double>& m)
     return img;
 }
 
-const QRgb getqRgbFlow(const Matrix<double>& flow, double max_flow_norm, double brightness)
+const QRgb getQRgbFromFlow(const Matrix<double>& flow, double max_flow_norm)
 {
     double flow_x = flow.data(0);
     double flow_y = flow.data(1);
@@ -75,105 +75,48 @@ const QRgb getqRgbFlow(const Matrix<double>& flow, double max_flow_norm, double 
         flow_angle += 2*M_PI;
     double seturation = flow_norm / max_flow_norm;
     double hue = flow_angle * 180./M_PI;
-    double v_min = (1. - seturation)*brightness;
-    double a = (brightness - v_min)*double((int)hue % 60)/60.;
+    double v_min = 1. - seturation;
+    double a = (1 - v_min)*double((int)hue % 60)/60.;
     double v_inc = v_min + a;
-    double v_dec = brightness - a;
+    double v_dec = 1 - a;
     int hue_i = int(hue / 60.)%6;
     switch(hue_i)
     {
     case 0:
-        return qRgb(int(255.*brightness), int(v_inc*255.), int(v_min*255.));
+        return qRgb(255, int(v_inc*255.), int(v_min*255));
     case 1:
-        return qRgb(int(v_dec*255.), int(255.*brightness), int(v_min*255.));
+        return qRgb(int(v_dec*255.), 255, int(v_min*255));
     case 2:
-        return qRgb(int(v_min*255.), int(255.*brightness), int(v_inc*255.));
+        return qRgb(int(v_min*255.), 255, int(v_inc*255));
     case 3:
-        return qRgb(int(v_min*255.), int(v_dec*255.), int(255.*brightness));
+        return qRgb(int(v_min*255.), int(v_dec*255), 255);
     case 4:
-        return qRgb(int(v_inc*255.), int(v_min*255.), int(255.*brightness));
+        return qRgb(int(v_inc*255.), int(v_min*255), 255);
     case 5:
-        return qRgb(int(255.*brightness), int(v_min*255.), int(v_dec*255.));
+        return qRgb(255, int(v_min*255), int(v_dec*255.));
     }
 }
 
-/*
- * for(int x = 0; x < flows.cols(); ++x)
-        for(int y = 0; y < flows.rows(); ++y)
-        {
-            if(!isUnkownFlow(flows.data(x,y)))
-            {
-                flow_norms.data(x,y) = flows.data(x,y).norm();
-            }else
-            {
-                //flow_norms.data(x,y) = 0.;
-            }
-        }
-    std::sort(flow_norms.data(), flow_norms.data() + len - 1);
-    double norm_bound_hight = flow_norms.data(len - 1);
-    std::cout<<"norm_bound_hight: "<<norm_bound_hight<<"\n";
-    int low_border = 0;
-    for(int i = len - 1; i > -1; --i)
-        if(norm_bound_hight / flow_norms.data(i) > 10. )
-        {
-            low_border = i;
-            break;
-        }
-    double norm_bound_low = flow_norms.data(low_border);
-    std::cout<<"norm_bound_hight: "<<norm_bound_hight<<"\n";*/
-
-const QImage getQImageFlows(const Matrix<Matrix<double> >& flows)
+const QImage getQImageFromFlows(const Matrix<Matrix<double> >& flows)
 {
     QImage img(flows.cols(), flows.rows(), QImage::Format_RGB32);
-    Matrix<double> flow_norms(flows.cols(), flows.rows());
-    int len = flows.cols()*flows.rows();
-    std::cout<<"blalala\n";
-    for(int y = 0; y < flows.rows(); ++y)
-    {
-        for(int x = 0; x < flows.cols(); ++x)
-        {
-
-            //flow_norms.data(x,y) = flows.data(x,y).norm();
-            if(!isUnkownFlow(flows.data(x,y)))
+        double max_flow_norm = 0.;
+        for(int y = 0; y < flows.rows(); ++y)
+            for(int x = 0; x < flows.cols(); ++x)
+            if(flows.data(x, y).norm() > max_flow_norm && !isUnkownFlow(flows.data(x, y)))
             {
-                std::cout<<"not unkown\n";
-                flow_norms.data(x,y) = flows.data(x,y).norm();
-                std::cout<<flows.data(x,y).norm()<<"\n";
-                std::cout<<flow_norms.data(x,y)<<"\n";
-                assert(flow_norms.data(x,y) == flows.data(x,y).norm());
+                //std::cout<<x<<" "<<y<<"\n"<<flow.data(x, y);
+                max_flow_norm = flows.data(x, y).norm();
+                //std::cout<<max_flow_norm<<"\n";
             }
-            else
+        //max_flow_norm = 7.;
+        for(int y = 0; y < flows.rows(); ++y)
+            for(int x = 0; x < flows.cols(); ++x)
             {
-                std::cout<<"unkown\n";
-                flow_norms.data(x,y) = 0.;//flows.data(x,y).norm();
+                img.setPixel(x, y, getQRgbFromFlow(flows.data(x, y), max_flow_norm));
             }
-        }
-    }
-    std::sort(flow_norms.data(), flow_norms.data() + len - 1);
-    double norm_bound_hight = flow_norms.data(len - 1);
-    std::cout<<norm_bound_hight<<"\n";
-    /*double persnt = 0.9;
-    double norm_bound_low = flow_norms.data(int(persnt*(len - 1)));
-    */
-    int low_border = 0;
-    for(int i = len - 2; i > -1; --i)
-        if(norm_bound_hight / flow_norms.data(i) > 10. )
-        {
-            low_border = i;
-            break;
-        }
-    double norm_bound_low = flow_norms.data(low_border);
-    std::cout<<"norm_bound_low: "<<norm_bound_low<<"\n";
-    for(int y = 0; y < flows.rows(); ++y)
-        for(int x = 0; x < flows.cols(); ++x)
-        {
-            if(flow_norms.data(x,y) < norm_bound_low)
-                img.setPixel(x, y, getqRgbFlow(flows.data(x, y), norm_bound_low, 0.95));
-            else
-                img.setPixel(x, y, getqRgbFlow(flows.data(x, y), norm_bound_hight, 0.7));
-        }
 
-    return img;
+        return img;
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -184,14 +127,14 @@ const QImage getQImageFlows(const Matrix<Matrix<double> >& flows)
 Matrix<double> UnknownFlow()
 {
     Matrix<double> f(1, 2);
-    f.data(0) = 255.;
-    f.data(1) = 255.;
+    f.data(0) = std::numeric_limits<double>::max();
+    f.data(1) = std::numeric_limits<double>::max();
     return f;
 }
 
 bool isUnkownFlow(const Matrix<double>& flow)
 {
-    return (flow.data(0) == 255. && flow.data(1) == 255.);
+    return (flow.data(0) == std::numeric_limits<double>::max() && flow.data(1) == std::numeric_limits<double>::max());
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -301,6 +244,11 @@ const Matrix<double> LucasKanadeRefined(const int x, const int y,
             break;
         flow += flow_step;
     }
+    if(!inRange(x + flow.data(0), y + flow.data(1), img_curr))
+    {
+        //std::cout<<"not in range\n";
+        return Matrix<double>(1,2);
+    }
     return flow;
 }
 
@@ -364,28 +312,70 @@ const Matrix<Matrix<double> > PyramidalLucasKanadeRefined(int window_size,  doub
         //QString s = "/home/den/images/Army/" +  QString::number(level) +".png";
         //flow_img.save(s);
     }
+    handleFlowError(flows, max_error, img_prev, img_curr);
+    return flows;
+}
+
+//marks the bad flows as UnkownFlow with big error in intensity and with big norm
+void handleFlowError(Matrix<Matrix<double> >& flows, double max_error,
+                     const Matrix<double>& img_prev, const Matrix<double>& img_curr)
+{
+    double norm_mean = 0.;
+    Matrix<double> flow_norms(flows.cols(), flows.rows());
     for(int x = 0; x < flows.cols(); ++x)
         for(int y = 0; y < flows.rows(); ++y)
         {
-            double error = fabs(img_curr.getInterpolatedValue(x + flows.data(x,y).data(0), y + flows.data(x,y).data(1))
-                                - img_prev.getValue(x, y));
-            if(error > max_error)
+            if(isUnkownFlow(flows.data(x,y)))
             {
-                std::cout<<"error\n";
-                flows.data(x, y) = UnknownFlow();
                 continue;
             }
             if(!inRange(x + flows.data(x,y).data(0), y + flows.data(x,y).data(1), img_curr))
             {
-                std::cout<<"not in range\n";
+                //std::cout<<"not in range\n";
                 flows.data(x, y) = UnknownFlow();
                 continue;
             }
+            double error = fabs(img_curr.getInterpolatedValue(x + flows.data(x,y).data(0), y + flows.data(x,y).data(1))
+                                - img_prev.getValue(x, y));
+            if(error > max_error)
+            {
+                //std::cout<<"error\n";
+                flows.data(x,y) = UnknownFlow();
+                continue;
+            }
+            flow_norms.data(x,y) = flows.data(x,y).norm();
+            norm_mean += flow_norms.data(x,y);
         }
-    return flows;
-}
+    norm_mean /= double(flows.total());
+    double norm_s = 0.;
+    for(int x = 0; x < flows.cols(); ++x)
+        for(int y = 0; y < flows.rows(); ++y)
+        {
+            if(isUnkownFlow(flows.data(x,y)))
+            {
+                continue;
+            }
+            norm_s += (flow_norms.data(x,y) - norm_mean)*(flow_norms.data(x,y) - norm_mean);
+        }
+    norm_s = sqrt(1./double(flows.total() - 1) * norm_s);
+    //5 sigma rule
+    double left_norm = norm_mean - 5.*norm_s;
+    double right_norm = norm_mean + 5.*norm_s;
+    for(int x = 0; x < flows.cols(); ++x)
+        for(int y = 0; y < flows.rows(); ++y)
+        {
+            if(isUnkownFlow(flows.data(x,y)))
+            {
+                continue;
+            }
+            if(flow_norms.data(x,y) < left_norm || flow_norms.data(x,y) > right_norm)
+            {
+                flows.data(x,y) = UnknownFlow();
+            }
+        }
+    return;
 
-//void handleFlowError(Matrix<Matrix<double> > flows, )
+}
 
 }
 
