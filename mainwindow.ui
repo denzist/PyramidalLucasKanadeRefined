@@ -100,14 +100,14 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>194</y>
-      <width>71</width>
+      <width>81</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>smothing 
+     <string>smoothing 
 sigma</string>
     </property>
    </widget>
@@ -124,8 +124,8 @@ sigma</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>194</y>
+      <x>180</x>
+      <y>200</y>
       <width>71</width>
       <height>41</height>
      </rect>
@@ -148,14 +148,14 @@ size</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>254</y>
-      <width>71</width>
+      <width>81</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>smothing 
+     <string>smoothing 
 window 
 size</string>
     </property>
@@ -173,14 +173,15 @@ size</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>264</y>
-      <width>71</width>
-      <height>41</height>
+      <x>180</x>
+      <y>260</y>
+      <width>81</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>max 
+     <string>max
+ intensity 
 error</string>
     </property>
    </widget>
@@ -197,8 +198,8 @@ error</string>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>314</y>
+      <x>10</x>
+      <y>310</y>
       <width>71</width>
       <height>51</height>
      </rect>
@@ -222,8 +223,8 @@ level</string>
    <widget class="QLabel" name="state">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>310</y>
+      <x>180</x>
+      <y>320</y>
       <width>251</width>
       <height>61</height>
      </rect>
