@@ -20,7 +20,7 @@ Here some parameters:
 - smoothing window size - the size of the smoothing window of the gauss kernel;
 - max scaling level - max level for pyramid scaling;
 - window size - the size of window of pixel neighbors for Lucas Kanade Algorithm;
-- max intensity error - the max allowed error in intensity for calulated;
+- max intensity error - the max allowed error in intensity difference;
 
 Color of the resulted optical flow image shows direction of optical flow.
 The saturation of the pixel shows optical flow norm.
