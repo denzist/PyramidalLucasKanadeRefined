@@ -8,7 +8,11 @@ I don't know can it be build it in Windows or other platforms
 
 To build this project:
 
-Open it in QT Creator, then qmake and finaly build project
+- Open it in QT Creator
+- then qmake
+- and finaly build project
+
+After all this steps you can start use it.
   
   
 
